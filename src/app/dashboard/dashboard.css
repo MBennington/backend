@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+.header {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-icon {
+  height: 48px;
+  border-radius: 12px;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.overview-section {
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.overview-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.overview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.overview-card-wide {
+  grid-column: 1 / -1;
+}
+
+.overview-card-highlighted {
+  background-color: #f8f9fa;
+  border: 2px solid #007AFF;
+  box-shadow: 0 6px 12px rgba(0, 122, 255, 0.15);
+}
+
+.overview-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.overview-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-left: 10px;
+}
+
+.overview-number {
+  font-size: 24px;
+  font-weight: 800;
+  color: #007AFF;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.overview-subtext {
+  font-size: 13px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.payment-rate-section {
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+
+.payment-rate-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-rate-info {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.payment-rate-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.payment-rate-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #AF52DE;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.error-container {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 500px;
+  margin: 50px auto;
+}
+
+.error-title {
+  color: #FF3B30;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: #666;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .app-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .header-title {
+    font-size: 20px;
+  }
+  
+  .header-subtitle {
+    font-size: 13px;
+  }
+}
