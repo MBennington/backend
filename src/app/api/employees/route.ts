@@ -103,6 +103,13 @@ export async function POST(req: NextRequest) {
 
     const { userId } = authResult
 
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID not found' },
+        { status: 401 }
+      )
+    }
+
     // Parse and validate request body
     const body = await req.json()
     const validatedData = createEmployeeSchema.parse(body)

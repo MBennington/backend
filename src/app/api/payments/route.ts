@@ -14,6 +14,10 @@ export async function GET(req: NextRequest) {
   }
   const userId = authResult.userId;
 
+  if (!userId) {
+    return addCorsHeaders(NextResponse.json({ error: 'User ID not found' }, { status: 401 }));
+  }
+
   try {
     const payments = await prisma.payment.findMany({
       where: {
@@ -50,6 +54,10 @@ export async function POST(req: NextRequest) {
     return addCorsHeaders(NextResponse.json({ error: authResult.error }, { status: 401 }));
   }
   const userId = authResult.userId;
+
+  if (!userId) {
+    return addCorsHeaders(NextResponse.json({ error: 'User ID not found' }, { status: 401 }));
+  }
 
   try {
     const body = await req.json();
