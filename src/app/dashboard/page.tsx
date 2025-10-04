@@ -1,7 +1,12 @@
 import React from 'react';
 import { PrismaClient } from '@prisma/client';
+import { headers } from 'next/headers';
 
 const prisma = new PrismaClient();
+
+// Force dynamic rendering - disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function PublicDashboard() {
   try {
@@ -87,6 +92,17 @@ export default async function PublicDashboard() {
         <head>
           <title>ARECA Dashboard</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+          <meta httpEquiv="Pragma" content="no-cache" />
+          <meta httpEquiv="Expires" content="0" />
+          <script dangerouslySetInnerHTML={{
+            __html: `
+              // Force refresh every 30 seconds to ensure fresh data
+              setTimeout(() => {
+                window.location.reload();
+              }, 30000);
+            `
+          }} />
           <style>{`
             * {
               margin: 0;
@@ -238,13 +254,30 @@ export default async function PublicDashboard() {
             }
             
             
-            .footer {
-              text-align: center;
-              padding: 20px;
-              color: #666;
-              font-size: 14px;
-              margin-top: 20px;
-            }
+             .footer {
+               text-align: center;
+               padding: 20px;
+               color: #666;
+               font-size: 14px;
+               margin-top: 20px;
+             }
+             
+             .refresh-button {
+               background-color: #007AFF;
+               color: white;
+               border: none;
+               padding: 8px 16px;
+               border-radius: 8px;
+               font-size: 14px;
+               font-weight: 600;
+               cursor: pointer;
+               margin: 10px;
+               transition: background-color 0.2s ease;
+             }
+             
+             .refresh-button:hover {
+               background-color: #0056CC;
+             }
             
             @media (max-width: 768px) {
               .container {
@@ -383,11 +416,17 @@ export default async function PublicDashboard() {
             </div>
 
 
-            {/* Footer */}
-            <div className="footer">
-              <p>ARECA Business Management System - Public Dashboard</p>
-              <p>Last updated: {new Date().toLocaleString()}</p>
-            </div>
+             {/* Footer */}
+             <div className="footer">
+               <p>ARECA Business Management System - Public Dashboard</p>
+               <p>Last updated: {new Date().toLocaleString()} (Live Data)</p>
+               <button 
+                 className="refresh-button" 
+                 onClick={() => window.location.reload()}
+               >
+                 🔄 Refresh Data
+               </button>
+             </div>
           </div>
         </body>
       </html>
