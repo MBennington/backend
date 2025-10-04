@@ -7,7 +7,7 @@ import { authenticateToken } from '@/middleware/auth'
 // GET /api/work-records/[id] - Get a specific work record
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Get work record
     const workRecord = await prisma.workRecord.findFirst({
@@ -62,7 +62,7 @@ export async function GET(
 // PUT /api/work-records/[id] - Update a work record
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -79,7 +79,7 @@ export async function PUT(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Parse and validate request body
     const body = await req.json()
@@ -156,7 +156,7 @@ export async function PUT(
 // DELETE /api/work-records/[id] - Delete a work record
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -173,7 +173,7 @@ export async function DELETE(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Check if work record exists and belongs to user
     const existingWorkRecord = await prisma.workRecord.findFirst({

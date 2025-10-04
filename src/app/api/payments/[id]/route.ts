@@ -4,7 +4,7 @@ import { authenticateToken } from '@/middleware/auth';
 import { addCorsHeaders, corsMiddleware } from '@/middleware/cors';
 
 // GET /api/payments/[id] - Get a specific payment
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const corsResponse = corsMiddleware(req);
   if (corsResponse) return corsResponse;
 
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     return addCorsHeaders(NextResponse.json({ error: authResult.error }, { status: 401 }));
   }
   const userId = authResult.userId;
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const payment = await prisma.payment.findFirst({
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT /api/payments/[id] - Update payment status
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const corsResponse = corsMiddleware(req);
   if (corsResponse) return corsResponse;
 
@@ -53,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return addCorsHeaders(NextResponse.json({ error: authResult.error }, { status: 401 }));
   }
   const userId = authResult.userId;
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const body = await req.json();
@@ -108,7 +108,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE /api/payments/[id] - Delete a payment
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const corsResponse = corsMiddleware(req);
   if (corsResponse) return corsResponse;
 
@@ -117,7 +117,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return addCorsHeaders(NextResponse.json({ error: authResult.error }, { status: 401 }));
   }
   const userId = authResult.userId;
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const existingPayment = await prisma.payment.findFirst({

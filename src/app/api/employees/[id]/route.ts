@@ -7,7 +7,7 @@ import { authenticateToken } from '@/middleware/auth'
 // GET /api/employees/[id] - Get a specific employee
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Get employee
     const employee = await prisma.employee.findFirst({
@@ -62,7 +62,7 @@ export async function GET(
 // PUT /api/employees/[id] - Update an employee
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -79,7 +79,7 @@ export async function PUT(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Parse and validate request body
     const body = await req.json()
@@ -142,7 +142,7 @@ export async function PUT(
 // DELETE /api/employees/[id] - Delete an employee
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Apply rate limiting
@@ -159,7 +159,7 @@ export async function DELETE(
     }
 
     const { userId } = authResult
-    const { id } = params
+    const { id } = await params
 
     // Check if employee exists and belongs to user
     const existingEmployee = await prisma.employee.findFirst({
