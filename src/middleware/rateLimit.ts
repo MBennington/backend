@@ -15,8 +15,9 @@ export const rateLimit = (config: RateLimitConfig) => {
     const windowStart = now - config.windowMs
 
     // Clean up expired entries
-    for (const [key, value] of rateLimitMap.entries()) {
-      if (value.resetTime < now) {
+    for (const key of rateLimitMap.keys()) {
+      const value = rateLimitMap.get(key)
+      if (value && value.resetTime < now) {
         rateLimitMap.delete(key)
       }
     }
