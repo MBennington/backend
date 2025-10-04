@@ -17,7 +17,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className="bg-blue-50 rounded-xl p-6">
               <h3 className="text-xl font-semibold text-blue-900 mb-3">
-                🔐 Authentication
+                Authentication
               </h3>
               <p className="text-blue-700">
                 Secure user registration, login, password reset, and session management
