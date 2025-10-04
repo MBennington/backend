@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  username  String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  avatar    String?  // Cloudinary URL
+  bio       String?
+  isActive  Boolean  @default(true)
+  isVerified Boolean @default(false)
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+      // Relations
+      sessions    Session[]
+      resetTokens ResetToken[]
+      employees   Employee[]
+      workRecords WorkRecord[]
+      payments    Payment[]
+
+      @@map("users")
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model ResetToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reset_tokens")
+}
+
+model Employee {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  specialNotes String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+      // Relations
+      createdBy   String   @db.ObjectId
+      user        User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+      workRecords WorkRecord[]
+      payments    Payment[]
+
+      @@map("employees")
+}
+
+model WorkRecord {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  employeeId String  @db.ObjectId
+  date      DateTime
+  kilograms Float    // Store as Float for MongoDB compatibility
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  createdBy String   @db.ObjectId
+  user      User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@map("work_records")
+}
+
+model Configuration {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  key         String   @unique
+  value       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("configurations")
+}
+
+model Payment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  employeeId  String   @db.ObjectId
+  amount      Float
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  createdBy   String   @db.ObjectId
+  user        User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
