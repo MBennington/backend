@@ -4,7 +4,7 @@ import { requireAuth } from '@/middleware/auth'
 import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary'
 import { uploadRateLimit } from '@/middleware/rateLimit'
 
-async function POST(req: NextRequest) {
+async function uploadAvatar(req: NextRequest) {
   // Apply rate limiting
   const rateLimitResult = uploadRateLimit(req)
   if (rateLimitResult) return rateLimitResult
@@ -112,7 +112,7 @@ async function POST(req: NextRequest) {
   }
 }
 
-async function DELETE(req: NextRequest) {
+async function deleteAvatar(req: NextRequest) {
   try {
     const user = (req as any).user
 
@@ -171,5 +171,5 @@ async function DELETE(req: NextRequest) {
   }
 }
 
-export const POST = requireAuth(POST)
-export const DELETE = requireAuth(DELETE)
+export const POST = requireAuth(uploadAvatar)
+export const DELETE = requireAuth(deleteAvatar)

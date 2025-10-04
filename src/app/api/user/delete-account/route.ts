@@ -4,7 +4,7 @@ import { requireAuth } from '@/middleware/auth'
 import { verifyPassword } from '@/lib/auth'
 import { authRateLimit } from '@/middleware/rateLimit'
 
-async function POST(req: NextRequest) {
+async function deleteAccount(req: NextRequest) {
   // Apply rate limiting
   const rateLimitResult = authRateLimit(req)
   if (rateLimitResult) return rateLimitResult
@@ -64,4 +64,4 @@ async function POST(req: NextRequest) {
   }
 }
 
-export const POST = requireAuth(POST)
+export const POST = requireAuth(deleteAccount)

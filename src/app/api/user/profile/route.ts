@@ -3,7 +3,7 @@ import { prisma } from '@/lib/database'
 import { requireAuth } from '@/middleware/auth'
 import { updateProfileSchema } from '@/lib/validation'
 
-async function GET(req: NextRequest) {
+async function getProfile(req: NextRequest) {
   try {
     const user = (req as any).user
 
@@ -45,7 +45,7 @@ async function GET(req: NextRequest) {
   }
 }
 
-async function PUT(req: NextRequest) {
+async function updateProfile(req: NextRequest) {
   try {
     const user = (req as any).user
     const body = await req.json()
@@ -98,5 +98,5 @@ async function PUT(req: NextRequest) {
   }
 }
 
-export const GET = requireAuth(GET)
-export const PUT = requireAuth(PUT)
+export const GET = requireAuth(getProfile)
+export const PUT = requireAuth(updateProfile)

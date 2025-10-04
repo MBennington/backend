@@ -5,7 +5,7 @@ import { hashPassword, verifyPassword } from '@/lib/auth'
 import { changePasswordSchema } from '@/lib/validation'
 import { authRateLimit } from '@/middleware/rateLimit'
 
-async function POST(req: NextRequest) {
+async function changePassword(req: NextRequest) {
   // Apply rate limiting
   const rateLimitResult = authRateLimit(req)
   if (rateLimitResult) return rateLimitResult
@@ -76,4 +76,4 @@ async function POST(req: NextRequest) {
   }
 }
 
-export const POST = requireAuth(POST)
+export const POST = requireAuth(changePassword)
