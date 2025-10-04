@@ -27,7 +27,12 @@ export const uploadToCloudinary = async (
   } = {}
 ): Promise<CloudinaryUploadResult> => {
   try {
-    const result = await cloudinary.uploader.upload(file, {
+    // Convert Buffer to base64 string if needed
+    const fileData = Buffer.isBuffer(file) 
+      ? `data:image/jpeg;base64,${file.toString('base64')}`
+      : file
+
+    const result = await cloudinary.uploader.upload(fileData, {
       folder: options.folder || 'areca/users',
       resource_type: options.resource_type || 'image',
       transformation: options.transformation,
