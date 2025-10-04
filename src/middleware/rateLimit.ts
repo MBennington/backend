@@ -15,12 +15,13 @@ export const rateLimit = (config: RateLimitConfig) => {
     const windowStart = now - config.windowMs
 
     // Clean up expired entries
-    for (const key of rateLimitMap.keys()) {
-      const value = rateLimitMap.get(key)
-      if (value && value.resetTime < now) {
-        rateLimitMap.delete(key)
+    const keysToDelete: string[] = []
+    rateLimitMap.forEach((value, key) => {
+      if (value.resetTime < now) {
+        keysToDelete.push(key)
       }
-    }
+    })
+    keysToDelete.forEach(key => rateLimitMap.delete(key))
 
     const key = `${ip}:${req.nextUrl.pathname}`
     const current = rateLimitMap.get(key)
