@@ -10,7 +10,7 @@ const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 
 export const rateLimit = (config: RateLimitConfig) => {
   return (req: NextRequest): NextResponse | null => {
-    const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown'
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
     const now = Date.now()
     const windowStart = now - config.windowMs
 
