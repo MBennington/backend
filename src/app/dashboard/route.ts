@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateToken } from '../../lib/auth';
+import { authenticateToken } from '../../middleware/auth';
 
 export async function GET(req: NextRequest) {
   try {
@@ -65,22 +65,23 @@ export async function GET(req: NextRequest) {
     }
 
     const user = authResult.user;
+    const token = req.headers.get('authorization')?.replace('Bearer ', '') || '';
 
     // Fetch dashboard data
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     
     const [employeesRes, workRecordsRes, configurationsRes, paymentsRes] = await Promise.all([
       fetch(`${baseUrl}/api/employees`, {
-        headers: { 'Authorization': `Bearer ${authResult.token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
       }),
       fetch(`${baseUrl}/api/work-records`, {
-        headers: { 'Authorization': `Bearer ${authResult.token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
       }),
       fetch(`${baseUrl}/api/configurations`, {
-        headers: { 'Authorization': `Bearer ${authResult.token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
       }),
       fetch(`${baseUrl}/api/payments`, {
-        headers: { 'Authorization': `Bearer ${authResult.token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
       })
     ]);
 
