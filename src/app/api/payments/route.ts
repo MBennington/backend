@@ -99,5 +99,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function OPTIONS(req: NextRequest) {
-  return corsMiddleware(req);
+  const corsResponse = corsMiddleware(req);
+  return corsResponse || new NextResponse(null, { status: 200 });
 }

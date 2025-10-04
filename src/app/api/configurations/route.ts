@@ -85,7 +85,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function OPTIONS(req: NextRequest) {
-  return corsMiddleware(req)
+  const corsResponse = corsMiddleware(req)
+  return corsResponse || new NextResponse(null, { status: 200 })
 }
 
 // Helper function to get configuration descriptions
