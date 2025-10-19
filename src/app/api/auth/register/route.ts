@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       password,
       firstName,
       lastName,
-      role: 'user'
+      role: 'USER'
     });
 
     if (!user) {

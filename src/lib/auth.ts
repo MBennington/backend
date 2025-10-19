@@ -1,10 +1,15 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { getDatabase } from './database';
+import { prisma } from './prisma';
 import { User } from './models';
+import { ObjectId } from 'mongodb';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_SECRET: string = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || '7d';
+
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET not set, using default secret. This is not secure for production!');
+}
 
 export interface AuthUser {
   id: string;
@@ -24,7 +29,7 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 }
 
 export function generateToken(user: AuthUser): string {
-  return jwt.sign(
+  return (jwt.sign as any)(
     { 
       id: user.id, 
       email: user.email, 
@@ -38,7 +43,7 @@ export function generateToken(user: AuthUser): string {
 
 export function verifyToken(token: string): AuthUser | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = (jwt.verify as any)(token, JWT_SECRET);
     return {
       id: decoded.id,
       email: decoded.email,
@@ -54,8 +59,7 @@ export function verifyToken(token: string): AuthUser | null {
 
 export async function authenticateUser(email: string, password: string): Promise<{ user: AuthUser; token: string } | null> {
   try {
-    const db = await getDatabase();
-    const user = await db.collection<User>('users').findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
     
     if (!user) {
       return null;
@@ -67,11 +71,11 @@ export async function authenticateUser(email: string, password: string): Promise
     }
 
     const authUser: AuthUser = {
-      id: user._id!.toString(),
+      id: user.id,
       email: user.email,
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstName || undefined,
+      lastName: user.lastName || undefined,
       role: user.role
     };
 
@@ -86,19 +90,18 @@ export async function authenticateUser(email: string, password: string): Promise
 
 export async function getUserById(userId: string): Promise<AuthUser | null> {
   try {
-    const db = await getDatabase();
-    const user = await db.collection<User>('users').findOne({ _id: new ObjectId(userId) });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     
     if (!user) {
       return null;
     }
 
     return {
-      id: user._id!.toString(),
+      id: user.id,
       email: user.email,
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstName || undefined,
+      lastName: user.lastName || undefined,
       role: user.role
     };
   } catch (error) {
@@ -113,42 +116,129 @@ export async function createUser(userData: {
   password: string;
   firstName?: string;
   lastName?: string;
-  role?: 'admin' | 'user';
+  role?: 'ADMIN' | 'USER';
 }): Promise<AuthUser | null> {
   try {
-    const db = await getDatabase();
-    
     // Check if user already exists
-    const existingUser = await db.collection<User>('users').findOne({ email: userData.email });
+    const existingUser = await prisma.user.findUnique({ where: { email: userData.email } });
     if (existingUser) {
       return null;
     }
 
     const hashedPassword = await hashPassword(userData.password);
     
-    const user: Omit<User, '_id'> = {
-      email: userData.email,
-      username: userData.username,
-      password: hashedPassword,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      role: userData.role || 'user',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    const result = await db.collection<User>('users').insertOne(user as User);
+    const user = await prisma.user.create({
+      data: {
+        email: userData.email,
+        username: userData.username,
+        password: hashedPassword,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: userData.role || 'USER',
+      }
+    });
     
     return {
-      id: result.insertedId.toString(),
+      id: user.id,
       email: user.email,
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstName || undefined,
+      lastName: user.lastName || undefined,
       role: user.role
     };
   } catch (error) {
     console.error('Create user error:', error);
+    return null;
+  }
+}
+
+// Reset token functions
+export async function generateResetToken(userId: string): Promise<string> {
+  const token = (jwt.sign as any)(
+    { userId, type: 'reset' },
+    JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+  
+  // Store reset token in database
+  await prisma.resetToken.create({
+    data: {
+      userId,
+      token,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+    }
+  });
+  
+  return token;
+}
+
+export async function validateResetToken(token: string): Promise<{ userId: string } | null> {
+  try {
+    const decoded = (jwt.verify as any)(token, JWT_SECRET);
+    
+    if (decoded.type !== 'reset') {
+      return null;
+    }
+    
+    // Check if token exists in database and is not used
+    const resetToken = await prisma.resetToken.findFirst({
+      where: {
+        token,
+        used: false,
+        expiresAt: {
+          gt: new Date()
+        }
+      }
+    });
+    
+    if (!resetToken) {
+      return null;
+    }
+    
+    return { userId: decoded.userId };
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function markResetTokenAsUsed(token: string): Promise<void> {
+  await prisma.resetToken.updateMany({
+    where: { token },
+    data: { used: true }
+  });
+}
+
+// Session validation
+export async function validateSession(token: string): Promise<AuthUser | null> {
+  try {
+    const decoded = (jwt.verify as any)(token, JWT_SECRET);
+    
+    // Check if session exists in database
+    const session = await prisma.session.findFirst({
+      where: {
+        token,
+        expiresAt: {
+          gt: new Date()
+        }
+      },
+      include: {
+        user: true
+      }
+    });
+    
+    if (!session) {
+      return null;
+    }
+    
+    return {
+      id: session.user.id,
+      email: session.user.email,
+      username: session.user.username,
+      firstName: session.user.firstName || undefined,
+      lastName: session.user.lastName || undefined,
+      role: session.user.role
+    };
+  } catch (error) {
     return null;
   }
 }

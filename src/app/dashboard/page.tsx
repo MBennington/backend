@@ -108,7 +108,7 @@ export default async function PrivateDashboard() {
       const dayCount = dayRecords.length;
       
       // Group records by employee for this day
-      const employeeContributions = {};
+      const employeeContributions: { [key: string]: { name: string; totalKg: number; recordCount: number } } = {};
       dayRecords.forEach(record => {
         const employeeName = record.employee.name;
         if (!employeeContributions[employeeName]) {
@@ -153,7 +153,7 @@ export default async function PrivateDashboard() {
     const pendingAmount = pendingPayments / paymentRate;
 
     // Get dispatched kilograms from database
-    let dispatches = [];
+    let dispatches: any[] = [];
     try {
       console.log('User ID:', user.id, 'Type:', typeof user.id);
       
@@ -328,7 +328,7 @@ export default async function PrivateDashboard() {
                   name="dispatchNotes"
                   className="form-textarea"
                   placeholder="Add any notes about this dispatch..."
-                  rows="3"
+                  rows={3}
                 ></textarea>
               </div>
               

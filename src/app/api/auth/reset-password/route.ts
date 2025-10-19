@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
     const validatedData = resetPasswordSchema.parse(body)
 
     // Validate reset token
-    const user = await validateResetToken(validatedData.token)
-    if (!user) {
+    const tokenData = await validateResetToken(validatedData.token)
+    if (!tokenData) {
       return NextResponse.json(
         { error: 'Invalid or expired reset token' },
         { status: 400 }
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // Update user password
     await prisma.user.update({
-      where: { id: user.id },
+      where: { id: tokenData.userId },
       data: { password: hashedPassword },
     })
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // Delete all user sessions to force re-login
     await prisma.session.deleteMany({
-      where: { userId: user.id },
+      where: { userId: tokenData.userId },
     })
 
     return NextResponse.json(
