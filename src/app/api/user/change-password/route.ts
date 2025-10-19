@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
+import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/middleware/auth'
 import { hashPassword, verifyPassword } from '@/lib/auth'
 import { changePasswordSchema } from '@/lib/validation'

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
+import { prisma } from '@/lib/prisma'
 import { authenticateToken } from '@/middleware/auth'
 import { addCorsHeaders, corsMiddleware } from '@/middleware/cors'
 

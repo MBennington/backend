@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
+import { prisma } from '@/lib/prisma'
 import { updateWorkRecordSchema } from '@/lib/validation'
 import { workRecordRateLimit } from '@/middleware/rateLimit'
 import { authenticateToken } from '@/middleware/auth'

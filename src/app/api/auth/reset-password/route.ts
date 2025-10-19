@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
+import { prisma } from '@/lib/prisma'
 import { hashPassword, validateResetToken, markResetTokenAsUsed } from '@/lib/auth'
 import { resetPasswordSchema } from '@/lib/validation'
 import { authRateLimit } from '@/middleware/rateLimit'

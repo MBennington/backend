@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getDatabase } from '../../../../lib/database';
-import { authenticateRequest, createErrorResponse } from '../../../../lib/middleware';
-import { Dispatch } from '../../../../lib/models';
+import { getDatabase } from '@/lib/database';
+import { authenticateRequest, createErrorResponse } from '@/lib/middleware';
+import { Dispatch } from '@/lib/models';
 import { ObjectId } from 'mongodb';
 
 export async function POST(request: NextRequest) {
