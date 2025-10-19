@@ -12,7 +12,7 @@ async function checkAuth() {
     const token = cookieStore.get('auth-token')?.value;
     
     if (token) {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/auth/me`, {
+      const response = await fetch('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

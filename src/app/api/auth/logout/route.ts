@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (token) {
       // Call your backend API for logout
       try {
-        await fetch(`${process.env.API_URL || 'http://localhost:3001'}/api/auth/logout`, {
+        await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
