@@ -9,25 +9,296 @@
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f5f5f5;
-  color: #1a1a1a;
-  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+}
+
+/* Main Progress Section - Modern Design */
+.main-progress-section {
+  margin-bottom: 32px;
+}
+
+.main-progress-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 24px;
+  padding: 32px;
+  color: white;
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.main-progress-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
+}
+
+.main-progress-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.main-progress-icon {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+.main-progress-info {
+  flex: 1;
+}
+
+.main-progress-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.5px;
+}
+
+.main-progress-subtitle {
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.main-progress-content {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.main-progress-number {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.main-progress-unit {
+  font-size: 24px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.main-progress-details {
+  display: flex;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.progress-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 14px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Secondary Metrics - Minimal Cards */
+.secondary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.metric-icon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 12px;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.metric-label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .header {
-  background-color: #fff;
-  border-radius: 16px;
+  background: white;
+  border-radius: 20px;
   padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Mobile header optimization */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
 }
 
 .header-content {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Mobile header content optimization */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .user-info {
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    gap: 8px;
+  }
+  
+  .header-actions {
+    gap: 8px;
+  }
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.logout-form {
+  margin: 0;
+}
+
+.logout-button {
+  background: #FF3B30;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logout-button:hover {
+  background: #d32f2f;
 }
 
 .app-icon {
@@ -59,6 +330,34 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
+}
+
+/* Mobile overview grid optimization */
+@media (max-width: 768px) {
+  .overview-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .overview-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .overview-card-wide {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-grid {
+    gap: 8px;
+  }
+  
+  .overview-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
 }
 
 .overview-card {
@@ -204,5 +503,570 @@
   
   .header-subtitle {
     font-size: 13px;
+  }
+}
+
+/* Daily Records Section - Minimal Design */
+.daily-records-section {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+}
+
+.daily-records-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.daily-records-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.daily-records-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.daily-records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Mobile daily records grid optimization */
+@media (max-width: 768px) {
+  .daily-records-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .daily-record-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .daily-records-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  
+  .daily-record-card {
+    padding: 8px;
+    border-radius: 6px;
+  }
+}
+
+.daily-record-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.daily-record-card.has-data {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.daily-record-card.no-data {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  opacity: 0.5;
+}
+
+.daily-record-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.daily-record-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.daily-record-kg {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.daily-record-count {
+  font-size: 11px;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+.daily-record-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.daily-record-employees {
+  margin-top: 8px;
+  border-top: 1px solid rgba(0, 122, 255, 0.2);
+  padding-top: 8px;
+}
+
+.employee-contribution {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.employee-contribution:last-child {
+  margin-bottom: 0;
+}
+
+.employee-name {
+  color: #1a1a1a;
+  font-weight: 500;
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.employee-kg {
+  color: #007AFF;
+  font-weight: 600;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  min-width: 35px;
+  text-align: center;
+}
+
+.daily-records-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+/* Mobile daily records summary optimization */
+@media (max-width: 768px) {
+  .daily-records-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .summary-card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .daily-records-summary {
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .summary-card {
+    padding: 12px;
+    border-radius: 6px;
+  }
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.summary-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Responsive Design for Daily Records */
+@media (max-width: 768px) {
+  .daily-records-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  
+  .daily-record-card {
+    padding: 12px;
+  }
+  
+  .daily-record-kg {
+    font-size: 16px;
+  }
+  
+  .daily-records-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .summary-card {
+    padding: 16px;
+  }
+  
+  .summary-value {
+    font-size: 20px;
+  }
+  
+  .daily-record-employees {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  
+  .employee-contribution {
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+  
+  .employee-name {
+    font-size: 10px;
+    margin-right: 6px;
+  }
+  
+  .employee-kg {
+    font-size: 9px;
+    padding: 1px 4px;
+    min-width: 30px;
+  }
+}
+
+/* Dispatched Section - Minimal Design */
+.dispatched-section {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+}
+
+/* Mobile dispatched section optimization */
+@media (max-width: 768px) {
+  .dispatched-section {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+  
+  .dispatched-form-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dispatched-section {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+}
+
+.dispatched-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.dispatched-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.dispatched-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.success-message {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #c3e6cb;
+  text-align: center;
+  justify-content: center;
+}
+
+.dispatched-form-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.dispatched-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #007AFF;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 12px;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.form-textarea {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #007AFF;
+}
+
+.dispatch-button {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.dispatch-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+}
+
+.dispatch-button:active {
+  transform: translateY(0);
+}
+
+/* Mobile touch interactions and improvements */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  .logout-button,
+  .dispatch-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better form inputs for mobile */
+  .form-input,
+  .form-textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 16px;
+  }
+  
+  /* Improve button spacing */
+  .dispatch-button {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+  }
+  
+  /* Better card hover effects for touch */
+  .overview-card:hover,
+  .daily-record-card:hover {
+    transform: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Active states for touch */
+  .overview-card:active,
+  .daily-record-card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 480px) {
+  /* Smaller text for very small screens */
+  .header-title {
+    font-size: 20px;
+  }
+  
+  .header-subtitle {
+    font-size: 12px;
+  }
+  
+  .overview-title {
+    font-size: 14px;
+  }
+  
+  .overview-number {
+    font-size: 24px;
+  }
+  
+  .daily-record-kg {
+    font-size: 14px;
+  }
+  
+  .daily-record-date {
+    font-size: 10px;
+  }
+  
+  /* Better spacing for small screens */
+  .dispatched-form {
+    gap: 12px;
+  }
+  
+  .form-input,
+  .form-textarea {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile responsiveness for modern design */
+@media (max-width: 768px) {
+  .main-progress-card {
+    padding: 24px;
+    border-radius: 20px;
+  }
+  
+  .main-progress-title {
+    font-size: 24px;
+  }
+  
+  .main-progress-number {
+    font-size: 48px;
+  }
+  
+  .main-progress-details {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .secondary-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .metric-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-progress-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  
+  .main-progress-title {
+    font-size: 20px;
+  }
+  
+  .main-progress-number {
+    font-size: 40px;
+  }
+  
+  .secondary-metrics {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .metric-card {
+    padding: 12px;
+    border-radius: 8px;
   }
 }

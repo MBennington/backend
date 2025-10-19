@@ -1,129 +1,154 @@
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { prisma } from './database'
-import { User } from '@prisma/client'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { getDatabase } from './database';
+import { User } from './models';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret'
-const JWT_EXPIRES_IN = '7d'
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export interface AuthUser {
-  id: string
-  email: string
-  username: string
-  firstName?: string
-  lastName?: string
-  avatar?: string
-  role: string
+  id: string;
+  email: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  role: string;
 }
 
-export const hashPassword = async (password: string): Promise<string> => {
-  const saltRounds = 12
-  return bcrypt.hash(password, saltRounds)
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
 }
 
-export const verifyPassword = async (
-  password: string,
-  hashedPassword: string
-): Promise<boolean> => {
-  return bcrypt.compare(password, hashedPassword)
+export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  return bcrypt.compare(password, hashedPassword);
 }
 
-export const generateToken = (user: AuthUser): string => {
+export function generateToken(user: AuthUser): string {
   return jwt.sign(
-    {
-      id: user.id,
-      email: user.email,
+    { 
+      id: user.id, 
+      email: user.email, 
       username: user.username,
-      role: user.role,
+      role: user.role 
     },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
-  )
+  );
 }
 
-export const verifyToken = (token: string): AuthUser | null => {
+export function verifyToken(token: string): AuthUser | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
     return {
       id: decoded.id,
       email: decoded.email,
       username: decoded.username,
-      role: decoded.role,
-    }
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
+      role: decoded.role
+    };
   } catch (error) {
-    return null
+    return null;
   }
 }
 
-export const createSession = async (userId: string): Promise<string> => {
-  const token = generateToken({ id: userId, email: '', username: '', role: 'USER' })
-  const expiresAt = new Date()
-  expiresAt.setDate(expiresAt.getDate() + 7) // 7 days
+export async function authenticateUser(email: string, password: string): Promise<{ user: AuthUser; token: string } | null> {
+  try {
+    const db = await getDatabase();
+    const user = await db.collection<User>('users').findOne({ email });
+    
+    if (!user) {
+      return null;
+    }
 
-  await prisma.session.create({
-    data: {
-      userId,
-      token,
-      expiresAt,
-    },
-  })
+    const isValidPassword = await verifyPassword(password, user.password);
+    if (!isValidPassword) {
+      return null;
+    }
 
-  return token
-}
+    const authUser: AuthUser = {
+      id: user._id!.toString(),
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role
+    };
 
-export const deleteSession = async (token: string): Promise<void> => {
-  await prisma.session.deleteMany({
-    where: { token },
-  })
-}
-
-export const validateSession = async (token: string): Promise<User | null> => {
-  const session = await prisma.session.findUnique({
-    where: { token },
-    include: { user: true },
-  })
-
-  if (!session || session.expiresAt < new Date()) {
-    return null
+    const token = generateToken(authUser);
+    
+    return { user: authUser, token };
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return null;
   }
-
-  return session.user
 }
 
-export const generateResetToken = async (userId: string): Promise<string> => {
-  const token = Math.random().toString(36).substring(2, 15) + 
-                Math.random().toString(36).substring(2, 15)
-  
-  const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 1) // 1 hour
+export async function getUserById(userId: string): Promise<AuthUser | null> {
+  try {
+    const db = await getDatabase();
+    const user = await db.collection<User>('users').findOne({ _id: new ObjectId(userId) });
+    
+    if (!user) {
+      return null;
+    }
 
-  await prisma.resetToken.create({
-    data: {
-      userId,
-      token,
-      expiresAt,
-    },
-  })
-
-  return token
-}
-
-export const validateResetToken = async (token: string): Promise<User | null> => {
-  const resetToken = await prisma.resetToken.findUnique({
-    where: { token },
-    include: { user: true },
-  })
-
-  if (!resetToken || resetToken.expiresAt < new Date() || resetToken.used) {
-    return null
+    return {
+      id: user._id!.toString(),
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role
+    };
+  } catch (error) {
+    console.error('Get user error:', error);
+    return null;
   }
-
-  return resetToken.user
 }
 
-export const markResetTokenAsUsed = async (token: string): Promise<void> => {
-  await prisma.resetToken.update({
-    where: { token },
-    data: { used: true },
-  })
+export async function createUser(userData: {
+  email: string;
+  username: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  role?: 'admin' | 'user';
+}): Promise<AuthUser | null> {
+  try {
+    const db = await getDatabase();
+    
+    // Check if user already exists
+    const existingUser = await db.collection<User>('users').findOne({ email: userData.email });
+    if (existingUser) {
+      return null;
+    }
+
+    const hashedPassword = await hashPassword(userData.password);
+    
+    const user: Omit<User, '_id'> = {
+      email: userData.email,
+      username: userData.username,
+      password: hashedPassword,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      role: userData.role || 'user',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await db.collection<User>('users').insertOne(user as User);
+    
+    return {
+      id: result.insertedId.toString(),
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role
+    };
+  } catch (error) {
+    console.error('Create user error:', error);
+    return null;
+  }
 }

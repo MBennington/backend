@@ -1,83 +1,60 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
-import { verifyPassword, generateToken, createSession } from '@/lib/auth'
-import { loginSchema } from '@/lib/validation'
-import { authRateLimit } from '@/middleware/rateLimit'
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { authenticateUser } from '../../../../lib/auth';
+import { createErrorResponse } from '../../../../lib/middleware';
 
-export async function POST(req: NextRequest) {
-  // Apply rate limiting
-  const rateLimitResult = authRateLimit(req)
-  if (rateLimitResult) return rateLimitResult
-
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json()
-    const validatedData = loginSchema.parse(body)
-
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email: validatedData.email },
-    })
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Check if user is active
-    if (!user.isActive) {
-      return NextResponse.json(
-        { error: 'Account is deactivated' },
-        { status: 401 }
-      )
-    }
-
-    // Verify password
-    const isPasswordValid = await verifyPassword(validatedData.password, user.password)
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Create session
-    const sessionToken = await createSession(user.id)
-
-    // Generate JWT token
-    const token = generateToken({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      role: user.role,
-    })
-
-    // Return user data (excluding password)
-    const { password, ...userWithoutPassword } = user
-
-    return NextResponse.json(
-      {
-        message: 'Login successful',
-        user: userWithoutPassword,
-        token,
-        sessionToken,
-      },
-      { status: 200 }
-    )
-  } catch (error: any) {
-    console.error('Login error:', error)
+    // Handle both JSON and form data
+    let email, password;
     
-    if (error.name === 'ZodError') {
-      return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
-        { status: 400 }
-      )
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType?.includes('application/json')) {
+      const body = await request.json();
+      email = body.email;
+      password = body.password;
+    } else {
+      // Handle form data
+      const formData = await request.formData();
+      email = formData.get('email') as string;
+      password = formData.get('password') as string;
     }
 
-    return NextResponse.json(
-      { error: 'Login failed' },
-      { status: 500 }
-    )
+    if (!email || !password) {
+      return createErrorResponse('Email and password are required', 400);
+    }
+
+    // Authenticate user with database
+    const authResult = await authenticateUser(email, password);
+    
+    if (!authResult) {
+      return createErrorResponse('Invalid email or password', 401);
+    }
+
+    const { user, token } = authResult;
+
+    // Set authentication cookie
+    const cookieStore = await cookies();
+    cookieStore.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    // Store user data in cookie for dashboard access
+    cookieStore.set('user-data', JSON.stringify(user), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    // Redirect to dashboard
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  } catch (error) {
+    console.error('Login error:', error);
+    return createErrorResponse('Internal server error', 500);
   }
 }

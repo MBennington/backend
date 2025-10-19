@@ -1,26 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { deleteSession } from '@/lib/auth'
-import { requireAuth } from '@/middleware/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
-async function handler(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const token = req.headers.get('authorization')?.replace('Bearer ', '')
-    
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth-token')?.value;
+
     if (token) {
-      await deleteSession(token)
+      // Call your backend API for logout
+      try {
+        await fetch(`${process.env.API_URL || 'http://localhost:3001'}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+      } catch (error) {
+        console.error('Backend logout error:', error);
+        // Continue with local logout even if backend call fails
+      }
     }
 
-    return NextResponse.json(
-      { message: 'Logout successful' },
-      { status: 200 }
-    )
+    // Clear authentication cookie
+    cookieStore.delete('auth-token');
+
+    // Redirect to login page
+    return NextResponse.redirect(new URL('/login', request.url));
   } catch (error) {
-    console.error('Logout error:', error)
+    console.error('Logout error:', error);
     return NextResponse.json(
-      { error: 'Logout failed' },
+      { error: 'Internal server error' },
       { status: 500 }
-    )
+    );
   }
 }
-
-export const POST = requireAuth(handler)

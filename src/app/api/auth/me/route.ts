@@ -1,47 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
-import { requireAuth } from '@/middleware/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { authenticateRequest, createErrorResponse, createAuthResponse } from '../../../../lib/middleware';
 
-async function handler(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const user = (req as any).user
-
-    const userData = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        avatar: true,
-        bio: true,
-        role: true,
-        isActive: true,
-        isVerified: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    })
-
-    if (!userData) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+    const { user, error } = await authenticateRequest(request);
+    
+    if (!user) {
+      return createErrorResponse('Authentication required', 401);
     }
 
-    return NextResponse.json(
-      { user: userData },
-      { status: 200 }
-    )
+    return createAuthResponse({
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      }
+    });
   } catch (error) {
-    console.error('Get user error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get user data' },
-      { status: 500 }
-    )
+    console.error('Get user info error:', error);
+    return createErrorResponse('Internal server error', 500);
   }
 }
-
-export const GET = requireAuth(handler)
